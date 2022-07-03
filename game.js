@@ -76,8 +76,10 @@ function runKaboom() {
   function hurt(healthpoints) {
     health -= healthpoints;
     if (health <= 0) {
-      alert("dead");
-      $("#health").style.width = "0%";
+      player.pos.x = playerLocation[0];
+      player.pos.y = playerLocation[1];
+      $("#health").style.width = "50%";
+      health = 50;
     } else {
       $("#health").style.width = health.toString() + "%";
     }
@@ -98,7 +100,7 @@ function runKaboom() {
     if (player.pos.y > height() * 2) {
       player.pos.x = playerLocation[0];
       player.pos.y = playerLocation[1];
-      hurt(15);
+      hurt(100);
     }
     if (player.isGrounded() && isJump) {
       jumpEffect();
@@ -191,6 +193,11 @@ function runKaboom() {
   var playerLocation = [0, 0];
   function Level(options) {
     eval(options.objectFunc);
+    if (player) {
+      player.pos.x = playerLocation[0];
+      player.pos.y = playerLocation[1];
+      return;
+    }
     playerLocation = options.playerLocation;
     add([
       sprite("player", { width: 64, height: 64 }),
@@ -212,7 +219,7 @@ function runKaboom() {
     makePlatforms(2304, 512, 2432, height(), "box", "lvl1");
     makePlatforms(1536, 576, 2496, height(), "lava", "lvl1");
     makePlatforms(2496, 512, 2880, height(), "grass", "lvl1");
-    makePortal(2880, 420, "alert('yay')");
+    makePortal(2880, 420, "lvl2()");
     add([
       pos(-24, 24),
       text("Welcome!", {
@@ -270,13 +277,50 @@ function runKaboom() {
       lvl,
     ]);
   }
+var enemies = [];
+  function enemy(x, y, type, hp) {
+      enemies.push({obj: add([
+        pos(x, y),
+        sprite(type, { width: 64, height: 64 }),
+        area(),
+        body(),
+        origin("bot"),
+        "enemy",
+      ]), health: hp});
+    }
+
+  function level2() {
+    destroyAll("lvl1");
+    destroyAll("lvl1danger");
+    destroyAll("portal");
+    makePlatforms(64, 256, 256, height(), "grass", "lvl2");
+    add([
+      pos(-24, 64),
+      text("Let's turn the difficulty up. Good luck!", {
+        size: 36,
+        font: "sink",
+      }),
+      lvl,
+    ]);
+    makePlatforms(256, 384, 1152, height(), "water", "lvl2");
+    makePlatforms(1152, 320, 2048, height(), "mysticalgrass", "lvl2");
+    add([
+      pos(1152, 64),
+      text("X to attack. (Uses 10% power)", {
+        size: 36,
+        font: "sink",
+      }),
+      lvl,
+    ]);
+    enemy(1344, 64, "dragon_red_left", 3);
+  }
   
   function lvl2() {
-    alert("You have reached level 2!");
+    lvl = "lvl2";
     Level({
       name: "MainLevel2",
-      objectFunc: "makePlatforms(64, 256, 256, height(), 'grass', 'lvl2');",
-      playerLocation: [0, 0],
+      objectFunc: "level2()",
+      playerLocation: [128, 0],
     })
   }
 
@@ -350,22 +394,36 @@ var player = get("player")[0];
     jumpEffect();
   });
   
+  onKeyPress("x", () => { // attack
+    if (health < 11) return;
+    add([
+    sprite("fireball_blue" , { width: 32, height: 32 }),
+    pos(player.pos.x, player.pos.y - 32),
+    area(),
+    origin("center"),
+    move((lastPressed || RIGHT), 1200),
+    cleanup(),
+])
+hurt(10);
+  });
   
-
+  var lastPressed = "";
   onKeyDown(["left", "a"], () => {
     if (isKeyDown("left") && isKeyDown("a")) return player.move(-SPEED / 2, 0);
     player.move(-SPEED, 0);
+    lastPressed = LEFT;
   });
 
   onKeyDown(["right", "d"], () => {
     if (isKeyDown("right") && isKeyDown("d")) return player.move(SPEED / 2, 0);
     player.move(SPEED, 0);
+    lastPressed = RIGHT;
   });
 
   player.onCollide(lvl + "danger", () => {
       player.pos.x = playerLocation[0];
       player.pos.y = playerLocation[1];
-      hurt(25);
+      hurt(100);
   });
 }
 
