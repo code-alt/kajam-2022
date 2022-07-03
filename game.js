@@ -87,14 +87,14 @@ function runKaboom() {
   }
   var lastFrameCam;
   onUpdate(() => {
+    // for (var i = 0; i < enemies.length; i++) {
+    //   enemies[i].pos.y = player.pos.y;
+    // }
     // make a smooth camera with lerp()
     if (isKeyDown("left") || isKeyDown("a")) {
       camPos(lerp(camPos().x, player.pos.x - 250, 0.05), height() / 2);
     } else {
-      camPos(
-        lerp(camPos().x, player.pos.x + 250, 0.05),
-        height() / 2
-      );
+      camPos(lerp(camPos().x, player.pos.x + 250, 0.05), height() / 2);
     }
     // camPos(player.pos.x + 250, height() / 2);
     if (player.pos.y > height() * 2) {
@@ -126,7 +126,7 @@ function runKaboom() {
   var rounds = 0;
   var lvl = "lvl1";
   function makePlatforms(x, y, x2, y2, spr) {
-    y2 = (y2 || height());
+    y2 = y2 || height();
     for (var i = x; i < x2; i += 64) {
       for (var j = y; j < y2; j += 64) {
         if (spr == "grass" || spr == "mysticalgrass") {
@@ -209,7 +209,6 @@ function runKaboom() {
       "player",
     ]);
   }
-  
 
   function level1() {
     makePlatforms(64, 256, 256, height(), "grass", "lvl1");
@@ -229,7 +228,7 @@ function runKaboom() {
       lvl,
     ]);
     add([
-      pos(280,  24),
+      pos(280, 24),
       text("You can use A-D or arrow keys to move and space or W to jump.", {
         size: 36,
         width: 512,
@@ -269,25 +268,28 @@ function runKaboom() {
     ]);
     add([
       pos(1200, 12),
-      text("See the top left bar? That's your spice power! Don't let this fall to zero or you'll restart the level. You can use special abilities like double jumping if you have enough power. (20%+) Try it here!", {
-        size: 36,
-        width: 512,
-        font: "sink",
-      }),
+      text(
+        "See the top left bar? That's your spice power! Don't let this fall to zero or you'll restart the level. You can use special abilities like double jumping if you have enough power. (20%+) Try it here!",
+        {
+          size: 36,
+          width: 512,
+          font: "sink",
+        }
+      ),
       lvl,
     ]);
   }
-var enemies = [];
-  function enemy(x, y, type, hp) {
-      enemies.push({obj: add([
+  var enemy;
+  function enemy(x, y, type, hp, dir) {
+    enemy = add([
         pos(x, y),
-        sprite(type, { width: 64, height: 64 }),
+        sprite(type, { width: 290, height: 325 }),
         area(),
-        body(),
+        solid(),
         origin("bot"),
         "enemy",
-      ]), health: hp});
-    }
+      ]);
+  }
 
   function level2() {
     destroyAll("lvl1");
@@ -306,22 +308,22 @@ var enemies = [];
     makePlatforms(1152, 320, 2048, height(), "mysticalgrass", "lvl2");
     add([
       pos(1152, 64),
-      text("X to attack. (Uses 10% power)", {
+      text("X to attack. (Uses 10%)", {
         size: 36,
         font: "sink",
       }),
       lvl,
     ]);
-    enemy(1344, 64, "dragon_red_left", 3);
+    enemy(1800, 320, "dragon_red_left", 3);
   }
-  
+
   function lvl2() {
     lvl = "lvl2";
     Level({
       name: "MainLevel2",
       objectFunc: "level2()",
       playerLocation: [128, 0],
-    })
+    });
   }
 
   Level({
@@ -353,10 +355,8 @@ var enemies = [];
 
   const SPEED = 640;
   const grav = 2000;
-var player = get("player")[0];
+  var player = get("player")[0];
   gravity(grav);
-
-
 
   var doubleJumping = false;
   onKeyPress(["space", "w"], () => {
@@ -373,7 +373,7 @@ var player = get("player")[0];
 
   var portalCode;
 
-  function makePortal(x, y, func) {  
+  function makePortal(x, y, func) {
     add([
       pos(x, y),
       origin("bot"),
@@ -385,27 +385,45 @@ var player = get("player")[0];
       eval(func);
     };
   }
-  
+
   player.onCollide("portal", () => {
     portalCode();
-  })
-  
+  });
+
   player.onDoubleJump(() => {
     jumpEffect();
   });
-  
-  onKeyPress("x", () => { // attack
+
+  setInterval(() => {
+    if (lvl == "lvl2") {
+    // will add support for multiple enemies soon
+    add([
+      sprite("fireball_red", { width: 64, height: 64 }),
+      pos(enemy.pos.x, enemy.pos.y + rand(-100, 100)),
+      area(),
+      origin("center"),
+      move(dir || LEFT, 1200),
+      cleanup(),
+      "bullet",
+    ]);
+  }
+  }, 2000);
+
+  onKeyPress("x", () => {
+    // attack
     if (health < 11) return;
     add([
-    sprite("fireball_blue" , { width: 32, height: 32 }),
-    pos(player.pos.x, player.pos.y - 32),
-    area(),
-    origin("center"),
-    move((lastPressed || RIGHT), 1200),
-    cleanup(),
-])
-hurt(10);
+      sprite("fireball_blue", { width: 32, height: 32 }),
+      pos(player.pos.x, player.pos.y - 32),
+      area(),
+      origin("center"),
+      move(lastPressed || RIGHT, 1200),
+      cleanup(),
+      "ball",
+    ]);
+    hurt(10);
   });
+
   
   var lastPressed = "";
   onKeyDown(["left", "a"], () => {
@@ -421,9 +439,9 @@ hurt(10);
   });
 
   player.onCollide(lvl + "danger", () => {
-      player.pos.x = playerLocation[0];
-      player.pos.y = playerLocation[1];
-      hurt(100);
+    player.pos.x = playerLocation[0];
+    player.pos.y = playerLocation[1];
+    hurt(100);
   });
 }
 
@@ -441,6 +459,11 @@ function continueLore() {
   bringIn("#txt" + (currentPlacement + 1));
   currentPlacement++;
 }
+// check bullet collision
+player.onCollide("bullet", (b) => {
+  hurt(25);
+  b.destroy();
+});
 
 function fallout(id) {
   $(id).style.display = "none";
