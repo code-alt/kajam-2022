@@ -5,4 +5,4 @@ I made assets and some code to another game that had left me with one day to mak
 
 # Install: (I don't know why you would install this)
 
-Clone this repo with git and run 'npm i && npm start'.
+Clone this repo with git and run `npm i && npm start`.
