@@ -1,0 +1,212 @@
+/* make game canvas */
+#gameDiv {
+  width: 100%;
+  height: 100vh;
+  background: #000;
+  position: fixed;
+  left: 0;
+  top: 0;
+  opacity: 1;
+  display: initial;
+  overflow: hidden;
+  animation: blackout 5s ease-in 0s infinite;
+  z-index: 10;
+  transition: 0.5s;
+}
+
+#gc {
+  width: 100%;
+  height: 100vh;
+  background: #000;
+  z-index: 100;
+  position: fixed;
+  opacity: 0;
+  display:none;
+  left: 0;
+  cursor: default;
+  top: 0;
+  overflow: hidden;
+  animation: blackout 5s ease-in 0s infinite;
+  z-index: 100;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  background: #000;
+  animation: blackout 5s ease-in 0s infinite;
+}
+
+@keyframes blackout {
+  0% {
+    background: rgb(10, 10, 10);
+  }
+  33.3% {
+    background: rgb(7, 7, 7);
+  }
+  66.6% {
+    background: rgb(15, 15, 15);
+  }
+  100% {
+    background: rgb(10, 10, 10);
+  }
+}
+
+#srttitle {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  font-size: 128px;
+  font-weight: bold;
+  font-family: "Inter";
+  text-align: center;
+  cursor: default;
+  z-index: 15;
+  transition: 0.5s;
+  opacity: 1;
+}
+
+.tt {
+  font-size: 64px;
+  font-weight: bold;
+  font-family: "Inter";
+  text-align: center;
+  cursor: default;
+  z-index: 15;
+  transition: 0.5s;
+  opacity: 0;
+  width: 100%;
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: initial;
+}
+
+/*#srttitle:hover {
+  position:initial;
+  transform: initial;
+  width: initial;
+  font-size: initial;
+}*/
+
+.pepper {
+  position: fixed;
+  right: 530px;
+  top: 10px;
+  width: 30px;
+}
+
+.progress {
+	position: fixed;
+	right: 10px;
+	top: -20px;
+	width: 100%;
+	margin: 50px auto;
+	max-width: 500px;
+	border: 3px solid white;
+  animation: spicyborder 5s ease-in 0s infinite;
+	height: 15px;
+	border-radius: 50px;
+	z-index: 10;
+}
+
+.progress .bar {
+	height: 100%;
+	width: 50%;
+	border-radius: 50px;
+	background-color: white;
+  animation: spicy 5s ease-in 0s infinite;
+	transition: 0.5s;
+	z-index: 10;
+}
+
+#srtbtn {
+  position: absolute;
+  top: 65%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 50px;
+  color: white;
+  background: rgb(42, 116, 212);
+  border-radius: 5px;
+  font-size: 24px;
+  font-weight: bold;
+  font-family: "Inter";
+  text-align: center;
+  line-height: 50px;
+  cursor: pointer;
+  z-index: 16;
+  transition: 0.5s;
+  border: 0;
+  border-radius: 15px;
+}
+
+#srtbtn:hover {
+  background: rgb(25, 92, 180);
+  color: white;
+}
+
+#gameframe {
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  width: 80%;
+  height: 80%;
+  z-index: 14;
+  background: rgb(41, 68, 124);
+  animation: color 5s ease-in 0s infinite;
+  border-radius: 50px;
+  transition: 0.5s;
+}
+
+@keyframes color {
+  0% {
+    background: #4280DC;
+  }
+  33.3% {
+    background: #6EA2C4;
+  }
+  66.6% {
+    background: #0097DD;
+  }
+  100% {
+    background: #4280DC;
+  }
+}
+
+@keyframes spicy {
+  0% {
+    background: #dc4242;
+  }
+  33.3% {
+    background: #c46e6e;
+  }
+  66.6% {
+    background: #dd0000;
+  }
+  100% {
+    background: #dc4242;
+  }
+}
+
+@keyframes spicyborder {
+  0% {
+    border-color: #dc4242;
+  }
+  33.3% {
+    border-color: #c46e6e;
+  }
+  66.6% {
+    border-color: #dd0000;
+  }
+  100% {
+    border-color: #dc4242;
+  }
+}
